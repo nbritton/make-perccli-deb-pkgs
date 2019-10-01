@@ -60,7 +60,7 @@ for file in $(ls perccli*.tar.gz); do
     for i in $(find . -type f | egrep -v "\.rpm|${bd}" | awk -F/ '{print $2}' | sort -u); do
         mv ${i} ./${bd}/opt/MegaRAID/perccli/;
     done
-    cd $bd;
+    cd ${bd};
     echo "ln -s /opt/MegaRAID/perccli/perccli64 /usr/sbin/perccli;" > debian/postinst;
     echo "unlink /usr/sbin/perccli;" > debian/postrm;
     umask 022;
