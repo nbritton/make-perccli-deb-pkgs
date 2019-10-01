@@ -44,9 +44,9 @@ which apt-ftparchive > /dev/null || {
 
 # Retrieve Linux perccli tar.gz files
 cat <<EOF | while read URL; do wget --quiet ${URL}; done
-https://downloads.dell.com/FOLDER04470715M/1/perccli_7.1-007.0127_linux.tar.gz
-https://downloads.dell.com/FOLDER04830419M/1/perccli_7.3-007.0318_linux.tar.gz
-https://downloads.dell.com/FOLDER05235308M/1/perccli_linux_NF8G9_A07_7.529.00.tar.gz
+${SITE}/FOLDER04470715M/1/perccli_7.1-007.0127_linux.tar.gz
+${SITE}/FOLDER04830419M/1/perccli_7.3-007.0318_linux.tar.gz
+${SITE}/FOLDER05235308M/1/perccli_linux_NF8G9_A07_7.529.00.tar.gz
 EOF
 
 mkdir ./build ./amd64;
