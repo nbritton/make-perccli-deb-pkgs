@@ -21,7 +21,7 @@ curl -s http://www.exabit.io/ubuntu/make-perccli-deb-pkgs | bash;
 chmod -R 755 /var/www/html/dell;
 ```
 
-Then to install perccli just add the repo to ./sources.list.d (don't forget to change hostname) and run apt.
+Then to install perccli just add the repo to ./sources.list.d/ (don't forget to change hostname) and run apt.
 
 ```bash
 echo "deb [arch=amd64 trusted=yes] http://yoursite.com/dell/perccli/ /" > /etc/apt/sources.list.d/dell-perccli.list;
