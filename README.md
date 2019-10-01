@@ -14,7 +14,7 @@ apt -qq install alien fakeroot apt-utils dpkg-dev;
 Here are the basic steps to use this tool:
 
 ```bash
-test -d /var/www/html || apt install -qq apache2;
+test -d /var/www/html || apt -qq install apache2;
 mkdir -p /var/www/html/dell/perccli;
 cd /var/www/html/dell/perccli;
 curl -s http://www.exabit.io/ubuntu/make-perccli-deb-pkgs | bash;
