@@ -1,0 +1,69 @@
+#!/bin/bash
+
+# Name: make-dell-perccli-deb-pkgs, Version: 1 
+# Author: Nikolas Britton
+#     E-mail: ytvzwld.mcteezy@rxltw.nzx (caesar, 11)
+#     E-mail: jxneppkj@ienwjpeo.yki (caesar, 22)
+#     Website: http://www.exabit.io
+# Copyright 2019 Nikolas Britton, Apache 2.0 License
+
+## Dell PERCCLI for Ubuntu Server.
+## PERCCLI doesn't exist in Dell's Linux package repositories,
+## so we need to build the .deb packages from the tar.gz files.
+
+test -x /usr/bin/fakeroot > /dev/null || {
+    echo "The fakeroot utility could not be found.";
+    echo "To install it, run: apt install fakeroot.";
+    exit 1;
+}
+
+which alien > /dev/null || {
+    echo "The alien utility could not be found.";
+    echo "To install it, run: apt install alien.";
+    exit 1;
+}
+
+which dpkg-buildpackage > /dev/null || {
+    echo "The dpkg-buildpackage utility could not be found.";
+    echo "To install it, run: apt install dpkg-dev.";
+    exit 1;
+}
+
+which apt-ftparchive > /dev/null || {
+    echo "The apt-ftparchive utility could not be found.";
+    echo "To install it, run: apt install apt-utils.";
+    exit 1;
+}
+
+# Retrieve Linux perccli tar.gz files
+cat <<EOF | while read URL; do wget --quiet ${URL}; done
+https://downloads.dell.com/FOLDER04470715M/1/perccli_7.1-007.0127_linux.tar.gz
+https://downloads.dell.com/FOLDER04830419M/1/perccli_7.3-007.0318_linux.tar.gz
+https://downloads.dell.com/FOLDER05235308M/1/perccli_linux_NF8G9_A07_7.529.00.tar.gz
+EOF
+
+mkdir ./build ./amd64;
+
+# Make perccli apt .deb packages
+for file in $(ls perccli*.tar.gz); do
+    tar -axf ${file} --strip-components=1 -C ./build/;
+    cd ./build;
+    find . -type f -name *.rpm | xargs fakeroot alien --keep-version --generate --target=amd64;
+    bd="$(ls | awk '/\.orig/ {sub("\\.orig$", ""); print}';)";
+    mv EFI license.txt ./${bd}/opt/MegaRAID/perccli/
+    cd $bd;
+    echo "ln -s /opt/MegaRAID/perccli/perccli64 /usr/sbin/perccli;" > debian/postinst;
+    echo "unlink /usr/sbin/perccli;" > debian/postrm;
+    dpkg-buildpackage -uc -b;
+    cd ../../;
+    mv ./build/*.deb ./amd64/;
+    rm -rf ./build/*;
+done
+
+# Make perccli apt package repository
+apt-ftparchive --arch amd64 packages amd64 > Packages;
+gzip -k -f Packages;
+apt-ftparchive release . > Release;
+
+rm perccli*.tar.gz;
+rm -rf ./build;
