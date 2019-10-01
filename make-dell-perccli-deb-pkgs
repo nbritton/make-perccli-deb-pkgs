@@ -11,6 +11,13 @@
 ## PERCCLI doesn't exist in Dell's Linux package repositories,
 ## so we need to build the .deb packages from the tar.gz files.
 
+SITE="https://downloads.dell.com";
+
+curl --silent ${SITE} > /dev/null || {
+    echo "Failed to connect to ${URL}";
+    exit 1;
+}
+
 test -x /usr/bin/fakeroot > /dev/null || {
     echo "The fakeroot utility could not be found.";
     echo "To install it, run: apt install fakeroot.";
