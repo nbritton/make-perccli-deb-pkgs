@@ -57,10 +57,13 @@ for file in $(ls perccli*.tar.gz); do
     cd ./build;
     find . -type f -name *.rpm | xargs fakeroot alien --keep-version --generate --target=amd64;
     bd="$(ls | awk '/\.orig/ {sub("\\.orig$", ""); print}';)";
-    mv EFI license.txt ./${bd}/opt/MegaRAID/perccli/
+    for i in $(find . -type f | egrep -v "\.rpm|${bd}" | awk -F/ '{print $2}' | sort -u); do
+        mv ${i} ./${bd}/opt/MegaRAID/perccli/;
+    done
     cd $bd;
     echo "ln -s /opt/MegaRAID/perccli/perccli64 /usr/sbin/perccli;" > debian/postinst;
     echo "unlink /usr/sbin/perccli;" > debian/postrm;
+    umask 022;
     dpkg-buildpackage -uc -b;
     cd ../../;
     mv ./build/*.deb ./amd64/;
